@@ -8,6 +8,7 @@ import db from "./Kambaz/Database/index.js";
 import UserRoutes from "./Kambaz/Users/routes.js";
 import CourseRoutes from "./Kambaz/Courses/routes.js";
 const app = express();
+
 app.use(
   cors({
     credentials: true,
