@@ -7,7 +7,7 @@ export default [
     lastName: "Stark",
     email: "tony@stark.com",
     dob: "1970-05-29T00:00:00.000Z",
-    role: "FACULTY",
+    role: "ADMIN",
     loginId: "001234561S",
     section: "S101",
     lastActivity: "2020-10-01",
