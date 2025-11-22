@@ -16,6 +16,7 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "express-session": "^1.18.2",
+    "mongoose": "^9.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "redux-persist": "^6.0.0",
