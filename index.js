@@ -6,11 +6,22 @@ import Hello from "./Hello.js";
 import Lab5 from "./Lab5/index.js";
 import cors from "cors";
 import db from "./Kambaz/Database/index.js";
-import UserRoutes from "./Kambaz/Users/routes.js";
+import UserRoutes from "./Kambaz/Users/Routes.js";
 import CourseRoutes from "./Kambaz/Courses/routes.js";
 const CONNECTION_STRING =
   process.env.DATABASE_CONNECTION_STRING || "mongodb://127.0.0.1:27017/kambaz";
-mongoose.connect(CONNECTION_STRING);
+mongoose
+  .connect(CONNECTION_STRING)
+  .then(() => {
+    console.log(
+      "Mongoose connected to:",
+      mongoose.connection.host,
+      mongoose.connection.name
+    );
+  })
+  .catch((err) => {
+    console.error("Mongoose connection error:", err);
+  });
 const app = express();
 
 app.use(
@@ -20,10 +31,7 @@ app.use(
       // Allow requests with no origin (like server-to-server or curl)
       if (!origin) return callback(null, true);
       const configured = process.env.CLIENT_URL || "http://localhost:3000";
-      const allowed = [
-        configured,
-        "http://localhost:3000",
-      ];
+      const allowed = [configured, "http://localhost:3000"];
       if (allowed.includes(origin)) {
         return callback(null, true);
       }

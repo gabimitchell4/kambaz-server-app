@@ -23,20 +23,20 @@ export default function UserRoutes(app) {
       res.status(400).json({ message: "Username already in use" });
       return;
     }
-    const currentUser = dao.createUser(req.body);
+    const currentUser = await dao.createUser(req.body);
     req.session["currentUser"] = currentUser;
     res.json(currentUser);
   };
 
   const signin = async (req, res) => {
     const { username, password } = req.body;
-    console.log("Signin attempt:", username, password);
+    console.log("Attempting signin for:", username);
     const currentUser = await dao.findUserByCredentials(username, password);
+    console.log("Signin result for", username, ":", currentUser);
     if (currentUser) {
       req.session["currentUser"] = currentUser;
       res.json(currentUser);
     } else {
-      console.log("signing in failed for user:", username);
       res.status(401).json({ message: "Unable to login. Try again later." });
     }
   };
@@ -81,7 +81,6 @@ export default function UserRoutes(app) {
 
   app.get("/api/users", findAllUsers);
   app.post("/api/users", createUser);
-  app.get("/api/users", findAllUsers);
   app.get("/api/users/:userId", findUserById);
   app.put("/api/users/:userId", updateUser);
   app.delete("/api/users/:userId", deleteUser);

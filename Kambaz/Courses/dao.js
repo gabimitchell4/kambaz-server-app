@@ -1,12 +1,13 @@
 import { v4 as uuidv4 } from "uuid";
+import model from "./model.js";
 export default function CoursesDao(db) {
   function findAllCourses() {
-    console.log("Finding all courses");
-    return db.courses;
+    return model.find({}, { name: 1, description: 1 });
   }
 
-  function findCoursesForEnrolledUser(userId) {
-    const { courses, enrollments } = db;
+  async function findCoursesForEnrolledUser(userId) {
+    const { enrollments } = db;
+    const courses = await model.find({}, { name: 1, description: 1 });
     console.log("Finding courses for userId:", userId);
     console.log(
       "Enrollments for user:",
@@ -23,33 +24,19 @@ export default function CoursesDao(db) {
 
   function createCourse(course) {
     const newCourse = { ...course, _id: uuidv4() };
-    db.courses = [...db.courses, newCourse];
-    console.log("Created new course:", newCourse);
-    console.log("Updated courses list:", db.courses);
-    return db.courses;
+    return model.create(newCourse);
   }
-
   function deleteCourse(courseId) {
-    const { courses, enrollments } = db;
-    db.courses = courses.filter((course) => course._id !== courseId);
-    db.enrollments = enrollments.filter(
-      (enrollment) => enrollment.course !== courseId
-    );
+    // const { courses, enrollments } = db;
+    // db.courses = courses.filter((course) => course._id !== courseId);
+    // db.enrollments = enrollments.filter(
+    //   (enrollment) => enrollment.course !== courseId
+    // );
+    return model.deleteOne({ _id: courseId });
   }
 
   function updateCourse(courseId, courseUpdates) {
-    const { courses } = db;
-    const course = courses.find((course) => course._id === courseId);
-    Object.assign(course, courseUpdates);
-    return course;
-  }
-
-  function findEnrollmentsForUserInCourse(userId) {
-    const { enrollments } = db;
-    return enrollments.filter(
-      (enrollment) =>
-        enrollment.user === userId
-    );
+    return model.updateOne({ _id: courseId }, { $set: courseUpdates });
   }
 
   return {
