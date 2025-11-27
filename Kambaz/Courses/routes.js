@@ -102,22 +102,39 @@ export default function CourseRoutes(app) {
   };
   const enrollUserInCourse = async (req, res) => {
     let { uid, cid } = req.params;
+
+    // Check if uid is "current" and retrieve the current user from the session
     if (uid === "current") {
       const currentUser = req.session["currentUser"];
       if (!currentUser) {
+        console.error("No current user found in session.");
         return res.status(401).json({ error: "Not signed in" });
       }
       uid = currentUser._id;
     }
+
     try {
+      // Validate that uid and cid are provided
+      if (!uid || !cid) {
+        console.error("Missing user ID or course ID.");
+        return res
+          .status(400)
+          .json({ error: "User ID and Course ID are required" });
+      }
+
+      console.log(`Attempting to enroll user ${uid} in course ${cid}`);
+
+      // Call the DAO method to enroll the user in the course
       await enrollmentsDao.enrollUserInCourse(uid, cid);
+
+      console.log(`Successfully enrolled user ${uid} in course ${cid}`);
       res.sendStatus(200);
     } catch (error) {
-      console.error("Error enrolling user in course:", error);
+      // Log the error and return a 500 status with a descriptive message
+      console.error("Error enrolling user in course:", error.message);
       res.status(500).json({ error: "Failed to enroll user in course" });
     }
   };
-
   const unenrollUserFromCourse = async (req, res) => {
     let { uid, cid } = req.params;
     if (uid === "current") {

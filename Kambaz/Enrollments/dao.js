@@ -9,12 +9,13 @@ export default function EnrollmentsDao(db) {
     return enrollments.map((enrollment) => enrollment.user);
   }
 
-  function enrollUserInCourse(userId, courseId) {
-    return model.create({
-      user: userId,
-      course: courseId,
-      _id: `${userId}-${courseId}`,
-    });
+function enrollUserInCourse(userId, courseId) {
+  return model.updateOne(
+    { _id: `${userId}-${courseId}` },
+    { $set: { user: userId, course: courseId } }, 
+    { upsert: true }
+  );
+
     // const { enrollments } = db;
     // enrollments.push({
     //   _id: uuidv4(),
